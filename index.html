@@ -181,9 +181,9 @@
 <div id="status-bar" class="hidden">
     <div class="stat-box">壓力值<span id="stress" class="stat-value">0</span></div>
     <div class="stat-box">疲勞度<span id="fatigue" class="stat-value">0</span></div>
-    <div class="stat-box">熟練度(速)<span id="skill" class="stat-value">30</span></div>
-    <div class="stat-box">標準度<span id="precision" class="stat-value">50</span></div>
-    <div class="stat-box">美感累積<span id="aesthetic" class="stat-value">20</span></div>
+    <div class="stat-box">熟練度(速)<span id="skill" class="stat-value">0</span></div>
+    <div class="stat-box">標準度<span id="precision" class="stat-value">0</span></div>
+    <div class="stat-box">美感累積<span id="aesthetic" class="stat-value">0</span></div>
 </div>
 
 <div id="game-container" class="hidden">
@@ -193,7 +193,8 @@
 </div>
 
 <script>
-    let state = {
+    // 初始狀態定義
+    const initialState = {
         stress: 10,
         fatigue: 0,
         skill: 30,
@@ -202,8 +203,10 @@
         step: 0
     };
 
+    let state = { ...initialState };
+
     const storyData = [
-        // --- 訓練日情境 (第一版題目) ---
+        // --- 訓練日情境 ---
         {
             header: "訓練日：字體的抉擇",
             text: "老師叮嚀：『今年評審口味偏向唐楷，但如果你寫習慣的顏體，求穩也是策略。』你要選擇哪種風格進行最後特訓？",
@@ -231,10 +234,10 @@
                 { text: "冥想臨摹：不拿筆，腦中模擬筆畫轉折。", impact: { aesthetic: 10, stress: -5, skill: 5 } }
             ]
         },
-        // --- 比賽日情境 (擴充至三題) ---
+        // --- 比賽日情境 ---
         {
             header: "比賽日：開局的突發失誤",
-            text: "哨音響起！50 分鐘倒數開始。進行到第 20 分鐘時，你發現有一個字的撇畫不夠精準，與範帖有些微落差，你會？",
+            text: "哨音響起！50 分鐘倒數開始。進行到第 20 分鐘時，你發現有一個字的撇畫不夠精準，你會？",
             options: [
                 { text: "強迫症發作：後面的字花更多時間雕琢，務求精確修正。", impact: { precision: 20, skill: -20, stress: 20 } },
                 { text: "棄車保帥：無視失誤維持速度，剩下的字順順寫完。", impact: { skill: 15, precision: -5, stress: 5 } },
@@ -243,7 +246,7 @@
         },
         {
             header: "比賽日：中場的生理極限",
-            text: "時間剩下 15 分鐘，還有 20 個字。此時你昨晚練習累積的疲勞爆發，手指開始不自覺輕微顫抖，你要怎麼應對？",
+            text: "時間剩下 15 分鐘，還有 20 個字。此時你昨晚練習累積的疲勞爆發，手指開始顫抖，你要怎麼應對？",
             options: [
                 { text: "咬牙硬撐：用更大的握筆力道抑制顫抖，堅持寫完。", impact: { fatigue: 20, precision: -10, skill: 10 } },
                 { text: "放輕筆觸：改用較輕靈的藝術筆法，掩飾線條的不穩。", impact: { aesthetic: 15, precision: -15, skill: 5 } },
@@ -252,11 +255,11 @@
         },
         {
             header: "比賽日：最後的落款難題",
-            text: "最後 3 分鐘！字全部寫完了。規則規定不能落款，但你發現作品右下角佈局略顯空曠。你要做最後的「調整」嗎？",
+            text: "最後 3 分鐘！字全部寫完了。你發現作品右下角佈局略顯空曠。你要做最後的「調整」嗎？",
             options: [
-                { text: "留白致敬：保持乾淨，遵守語文競賽最嚴格的規範。", impact: { precision: 20, stress: -10 } },
-                { text: "微調佈局：稍微拉長最後一字的末筆，填補空間美感。", impact: { aesthetic: 20, precision: -10, stress: 10 } },
-                { text: "檢查錯字：放棄美感，把所有時間拿來檢查有沒有漏字。", impact: { precision: 25, aesthetic: -10, fatigue: 5 } }
+                { text: "遵守規範：保持原樣，避免任何被扣分的風險。", impact: { precision: 20, stress: -10 } },
+                { text: "美化佈局：稍微拉長最後一字的末筆，填補空間感。", impact: { aesthetic: 20, precision: -10, stress: 10 } },
+                { text: "反覆檢查：放棄美感，把時間拿來檢查有無錯漏字。", impact: { precision: 25, aesthetic: -10, fatigue: 5 } }
             ]
         }
     ];
@@ -309,11 +312,17 @@
         loadScene();
     }
 
+    function resetGame() {
+        // 完全重置狀態
+        state = { ...initialState };
+        // 回到待機畫面或直接重新載入頁面
+        location.reload(); 
+    }
+
     function showResult() {
         const container = document.getElementById('game-container');
         
-        // 判定邏輯：技能(速)與疲勞的對比
-        // 熟練度與疲勞決定是否能在50分鐘內寫完
+        // 判定邏輯
         let finishAbility = state.skill - (state.fatigue * 0.5);
         let finalScore = (state.precision * 1.3) + (state.aesthetic * 0.7) - (state.stress * 0.5);
         
@@ -322,16 +331,16 @@
 
         if (finishAbility < 25) {
             rank = "落選 (未完成)";
-            feedback = "非常遺憾，雖然你的字跡優美，但因為體力透支與速度不足，鈴響時你還有三個字沒寫完。在全國賽中，這代表直接出局。";
-        } else if (finalScore > 110) {
+            feedback = "遺憾！雖然你的字優美，但因體力透支與速度不足，鈴響時你還有字沒寫完。在全國賽中，這代表直接出局。";
+        } else if (finalScore > 115) {
             rank = "特優 (畢業)";
-            feedback = "奇蹟發生了！你在緊湊的 50 分鐘內展現了教科書般的精準度。你終於從這場長達十一年的馬拉松中「畢業」了。";
+            feedback = "奇蹟發生了！你在緊湊的 50 分鐘內展現了教科書般的精準。你終於從這場十一年的馬拉松中「畢業」了。";
         } else if (finalScore > 85) {
             rank = "優等";
-            feedback = "你的表現極佳，但在評審眼裡，那幾處因為疲勞產生的顫抖線條終究成了遺憾。明年，你還會站在這裡嗎？";
+            feedback = "你的表現極佳，但在評審眼裡，那些顫抖的線條終究成了遺憾。明年，你還會站在這裡嗎？";
         } else {
             rank = "甲等";
-            feedback = "你完成了一件規規矩矩的作品。雖然沒有失誤，但在追求「標準」的過程中，你似乎也殺死了書法原有的藝術靈魂。";
+            feedback = "你完成了一件規矩的作品。但在追求「標準」的過程中，你似乎也殺死了書法原有的藝術靈魂。";
         }
 
         container.innerHTML = `
@@ -343,10 +352,10 @@
                 <br><br>
                 <hr>
                 <p style="font-size: 14px; color: #666;">
-                    這是一場關於「權衡」的競賽。根據報導，許多選手為了在 50 分鐘內寫完 50 個字，必須放棄更具美感的「帖字」與個人風格。
+                    這是一場關於「權衡」的競賽。根據報導，許多選手為了在時限內寫完，必須放棄個人風格。
                 </p>
             </div>
-            <button class="start-btn" style="width:100%" onclick="location.reload()">重新挑戰</button>
+            <button class="start-btn" style="width:100%" onclick="resetGame()">重新挑戰</button>
         `;
     }
 </script>
