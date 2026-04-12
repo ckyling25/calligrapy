@@ -24,11 +24,10 @@
             overflow-x: hidden;
         }
 
-        /* 待機畫面樣式 */
-        #start-screen {
+        /* 待機與過渡畫面通用樣式 */
+        .full-screen-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, #f4f1ea 0%, #dcd6c8 100%);
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -38,70 +37,39 @@
             transition: opacity 0.8s ease;
         }
 
+        #start-screen {
+            background: radial-gradient(circle, #f4f1ea 0%, #dcd6c8 100%);
+        }
+
+        #transition-screen {
+            background: #000;
+            color: #eee;
+            opacity: 0;
+            pointer-events: none;
+        }
+
         #start-screen::before {
             content: "法";
-            position: absolute;
-            font-size: 400px;
-            color: rgba(0,0,0,0.03);
-            z-index: -1;
-            right: -50px;
-            bottom: -50px;
-            transform: rotate(-15deg);
+            position: absolute; font-size: 400px; color: rgba(0,0,0,0.03);
+            z-index: -1; right: -50px; bottom: -50px; transform: rotate(-15deg);
         }
 
-        .main-title {
-            font-size: 56px;
-            margin: 0;
-            letter-spacing: 8px;
-            color: var(--ink-black);
-        }
-
-        .sub-title {
-            font-size: 24px;
-            margin: 10px 0 40px 0;
-            color: var(--accent-red);
-            border-top: 1px solid var(--accent-red);
-            border-bottom: 1px solid var(--accent-red);
-            padding: 5px 20px;
-        }
-
-        .monologue {
-            max-width: 500px;
-            line-height: 2;
-            font-style: italic;
-            color: #555;
-            margin-bottom: 50px;
-            padding: 0 20px;
-        }
+        .main-title { font-size: 56px; margin: 0; letter-spacing: 8px; }
+        .sub-title { font-size: 24px; margin: 10px 0 40px 0; color: var(--accent-red); border-top: 1px solid var(--accent-red); border-bottom: 1px solid var(--accent-red); padding: 5px 20px; }
+        
+        .monologue { max-width: 550px; line-height: 2; font-style: italic; margin-bottom: 50px; padding: 0 20px; }
+        #transition-screen .monologue { color: #ccc; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
 
         .start-btn {
-            padding: 15px 40px;
-            font-size: 20px;
-            background: var(--ink-black);
-            color: white;
-            border: none;
-            cursor: pointer;
-            letter-spacing: 2px;
-            transition: all 0.3s;
+            padding: 15px 40px; font-size: 20px; background: var(--ink-black); color: white; border: none; cursor: pointer; letter-spacing: 2px; transition: all 0.3s;
         }
-
-        .start-btn:hover {
-            background: var(--accent-red);
-            transform: scale(1.05);
-        }
+        #transition-screen .start-btn { background: #333; border: 1px solid #555; }
+        .start-btn:hover { background: var(--accent-red); transform: scale(1.05); }
 
         /* 遊戲數值面板 */
         #status-bar {
-            width: 100%;
-            background: var(--ink-black);
-            color: white;
-            padding: 15px 0;
-            display: flex;
-            justify-content: space-around;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            width: 100%; background: var(--ink-black); color: white; padding: 15px 0;
+            display: flex; justify-content: space-around; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
         .stat-box { text-align: center; font-size: 13px; }
@@ -109,63 +77,24 @@
 
         /* 遊戲容器 */
         #game-container {
-            width: 90%;
-            max-width: 700px;
-            background: var(--paper-white);
-            margin: 30px 0;
-            padding: 40px;
-            border-radius: 2px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid #dcd6c8;
+            width: 90%; max-width: 700px; background: var(--paper-white); margin: 30px 0; padding: 40px; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #dcd6c8;
         }
 
-        .scene-title {
-            color: var(--accent-red);
-            border-left: 5px solid var(--accent-red);
-            padding-left: 15px;
-            margin-top: 0;
-        }
-
-        #story-text {
-            line-height: 1.8;
-            font-size: 18px;
-            margin: 25px 0;
-        }
-
-        .options-grid {
-            display: grid;
-            gap: 12px;
-        }
-
-        .option-btn {
-            padding: 15px;
-            background: white;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            text-align: left;
-            font-size: 16px;
-            transition: 0.2s;
-        }
-
-        .option-btn:hover {
-            border-color: var(--accent-red);
-            background: #fff8f8;
-        }
+        .scene-title { color: var(--accent-red); border-left: 5px solid var(--accent-red); padding-left: 15px; margin-top: 0; }
+        #story-text { line-height: 1.8; font-size: 18px; margin: 25px 0; }
+        .options-grid { display: grid; gap: 12px; }
+        .option-btn { padding: 15px; background: white; border: 1px solid #ccc; cursor: pointer; text-align: left; font-size: 16px; transition: 0.2s; }
+        .option-btn:hover { border-color: var(--accent-red); background: #fff8f8; }
 
         .hidden { display: none !important; }
+        .visible-flex { display: flex !important; opacity: 1 !important; pointer-events: auto !important; }
 
-        .result-rank {
-            font-size: 48px;
-            color: var(--accent-red);
-            text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
-        }
+        .result-rank { font-size: 48px; color: var(--accent-red); text-align: center; margin: 20px 0; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="start-screen">
+<div id="start-screen" class="full-screen-overlay">
     <h1 class="main-title">50 分鐘的倒數</h1>
     <div class="sub-title">書法國賽選手「畢業」之路</div>
     <div class="monologue">
@@ -176,6 +105,13 @@
         <br>這五十個字，決定了我能否真正『畢業』...」
     </div>
     <button class="start-btn" onclick="startGame()">開始練習的一天</button>
+</div>
+
+<div id="transition-screen" class="full-screen-overlay">
+    <h2 style="color: var(--gold); letter-spacing: 5px;">集訓結束，深夜十一點</h2>
+    <div id="transition-text" class="monologue">
+        </div>
+    <button class="start-btn" onclick="startCompetition()">準備梳洗，迎接明天的比賽</button>
 </div>
 
 <div id="status-bar" class="hidden">
@@ -193,88 +129,19 @@
 </div>
 
 <script>
-    // 初始狀態定義
-    const initialState = {
-        stress: 10,
-        fatigue: 0,
-        skill: 30,
-        precision: 50,
-        aesthetic: 20,
-        step: 0
-    };
-
+    const initialState = { stress: 0, fatigue: 0, skill: 0, precision: 0, aesthetic: 0, step: 0 };
     let state = { ...initialState };
 
     const storyData = [
-        {
-            header: "訓練日：字體的抉擇",
-            text: "老師叮嚀：『今年評審口味偏向唐楷，但如果你寫習慣的顏體，求穩也是策略。』你要選擇哪種風格進行最後特訓？",
-            options: [
-                { text: "選擇歐陽詢（唐楷）：結構嚴謹，符合評審主流。", impact: { precision: 20, skill: -5, stress: 10 } },
-                { text: "選擇智永：筆法流暢，能大幅提升書寫速度。", impact: { skill: 20, aesthetic: 10, precision: -5 } },
-                { text: "選擇顏真卿：渾厚穩重，你最熟悉的本命字體。", impact: { precision: 10, fatigue: -5, stress: -5 } }
-            ]
-        },
-        {
-            header: "訓練日：午間集訓 PK",
-            text: "下午進行全縣集訓 PK 賽。現場老師將所有人的作品貼在黑板上，輪流講評。面對批評，你的反應是？",
-            options: [
-                { text: "虛心受教：反覆修改標準字形，磨練穩定性。", impact: { precision: 15, fatigue: 15, stress: 10 } },
-                { text: "堅持美感：偷偷加入一些帖字的省筆，增加藝術性。", impact: { aesthetic: 20, precision: -15, stress: 5 } },
-                { text: "觀察對手：看別人的作品來調整自己的佈局。", impact: { skill: 10, aesthetic: 5, fatigue: 10 } }
-            ]
-        },
-        {
-            header: "訓練日：深夜的體力邊緣",
-            text: "已經晚上 10 點了，你感到手指痠痛，手感卻正燙。明天就是全國賽，你要？",
-            options: [
-                { text: "再練 50 遍：為了肌肉記憶，拼了！", impact: { skill: 20, fatigue: 30, stress: 20 } },
-                { text: "立即休息：保持體力，避免明天手抖。", impact: { fatigue: -20, stress: -10, precision: 5 } },
-                { text: "冥想臨摹：不拿筆，腦中模擬筆畫轉折。", impact: { aesthetic: 10, stress: -5, skill: 5 } }
-            ]
-        },
-        {
-            header: "比賽日：開局的突發失誤",
-            text: "哨音響起！50 分鐘倒數開始。進行到第 20 分鐘時，你發現有一個字的撇畫不夠精準，你會？",
-            options: [
-                { text: "強迫症發作：後面的字花更多時間雕琢，務求精確修正。", impact: { precision: 20, skill: -20, stress: 20 } },
-                { text: "棄車保帥：無視失誤維持速度，剩下的字順順寫完。", impact: { skill: 15, precision: -5, stress: 5 } },
-                { text: "調整呼吸：放慢一點點速度，重新抓回運筆手感。", impact: { precision: 10, aesthetic: 10, fatigue: 5 } }
-            ]
-        },
-        {
-            header: "比賽日：中場的生理極限",
-            text: "時間剩下 15 分鐘，還有 20 個字。此時你昨晚練習累積的疲勞爆發，手指開始顫抖，你要怎麼應對？",
-            options: [
-                { text: "咬牙硬撐：用更大的握筆力道抑制顫抖，堅持寫完。", impact: { fatigue: 20, precision: -10, skill: 10 } },
-                { text: "放輕筆觸：改用較輕靈的藝術筆法，掩飾線條的不穩。", impact: { aesthetic: 15, precision: -15, skill: 5 } },
-                { text: "短暫停筆：閉眼三秒調整肌肉，消耗時間換取穩定。", impact: { precision: 15, skill: -15, stress: -10 } }
-            ]
-        },
-        {
-            header: "比賽日：最後的落款難題",
-            text: "最後 3 分鐘！字全部寫完了。你發現作品右下角佈局略顯空曠。你要做最後的「調整」嗎？",
-            options: [
-                { text: "遵守規範：保持原樣，避免任何被扣分的風險。", impact: { precision: 20, stress: -10 } },
-                { text: "美化佈局：稍微拉長最後一字的末筆，填補空間感。", impact: { aesthetic: 20, precision: -10, stress: 10 } },
-                { text: "反覆檢查：放棄美感，把時間拿來檢查有無錯漏字。", impact: { precision: 25, aesthetic: -10, fatigue: 5 } }
-            ]
-        }
+        // 訓練日 1-3
+        { header: "訓練日：字體的抉擇", text: "老師叮嚀：『今年評審口味偏向唐楷，但如果你寫習慣的顏體，求穩也是策略。』你要選擇哪種風格進行最後特訓？", options: [{ text: "選擇歐陽詢（唐楷）：結構嚴謹，符合評審主流。", impact: { precision: 30, skill: 10, stress: 15 } }, { text: "選擇智永：筆法流暢，能大幅提升書寫速度。", impact: { skill: 35, aesthetic: 20, precision: 10 } }, { text: "選擇顏真卿：渾厚穩重，你最熟悉的本命字體。", impact: { precision: 20, fatigue: 5, stress: 5 } }] },
+        { header: "訓練日：午間集訓 PK", text: "下午進行全縣集訓 PK 賽。現場老師將所有人的作品貼在黑板上，輪流講評。面對批評，你的反應是？", options: [{ text: "虛心受教：反覆修改標準字形，磨練穩定性。", impact: { precision: 25, fatigue: 20, stress: 15 } }, { text: "堅持美感：偷偷加入一些帖字的省筆，增加藝術性。", impact: { aesthetic: 30, precision: -10, stress: 10 } }, { text: "觀察對手：看別人的作品來調整自己的佈局。", impact: { skill: 15, aesthetic: 10, fatigue: 15 } }] },
+        { header: "訓練日：深夜的體力邊緣", text: "已經晚上 10 點了，你感到手指痠痛，手感卻正燙。明天就是全國賽，你要？", options: [{ text: "再練 50 遍：為了肌肉記憶，拼了！", impact: { skill: 30, fatigue: 40, stress: 25 } }, { text: "立即休息：保持體力，避免明天手抖。", impact: { fatigue: -10, stress: -15, precision: 10 } }, { text: "冥想臨摹：不拿筆，腦中模擬筆畫轉折。", impact: { aesthetic: 20, stress: -5, skill: 10 } }] },
+        // 比賽日 4-6
+        { header: "比賽日：開局的突發失誤", text: "哨音響起！50 分鐘倒數開始。進行到第 20 分鐘時，你發現有一個字的撇畫不夠精準，你會？", options: [{ text: "強迫症發作：後面的字花更多時間雕琢，務求精確修正。", impact: { precision: 25, skill: -20, stress: 25 } }, { text: "棄車保帥：無視失誤維持速度，剩下的字順順寫完。", impact: { skill: 20, precision: -5, stress: 10 } }, { text: "調整呼吸：放慢一點點速度，重新抓回運筆手感。", impact: { precision: 15, aesthetic: 15, fatigue: 10 } }] },
+        { header: "比賽日：中場的生理極限", text: "時間剩下 15 分鐘，還有 20 個字。此時你昨晚練習累積的疲勞爆發，手指開始顫抖，你要怎麼應對？", options: [{ text: "咬牙硬撐：用更大的握筆力道抑制顫抖，堅持寫完。", impact: { fatigue: 25, precision: -15, skill: 15 } }, { text: "放輕筆觸：改用較輕靈的藝術筆法，掩飾線條的不穩。", impact: { aesthetic: 20, precision: -20, skill: 10 } }, { text: "短暫停筆：閉眼三秒調整肌肉，消耗時間換取穩定。", impact: { precision: 20, skill: -15, stress: -10 } }] },
+        { header: "比賽日：最後的落款難題", text: "最後 3 分鐘！字全部寫完了。你發現作品右下角佈局略顯空曠。你要做最後的「調整」嗎？", options: [{ text: "遵守規範：保持原樣，避免任何被扣分的風險。", impact: { precision: 25, stress: -10 } }, { text: "美化佈局：稍微拉長最後一字的末筆，填補空間感。", impact: { aesthetic: 25, precision: -15, stress: 15 } }, { text: "反覆檢查：放棄美感，把時間拿來檢查有無錯漏字。", impact: { precision: 30, aesthetic: -15, fatigue: 10 } }] }
     ];
-
-    function startGame() {
-        // 修正：點擊時重置 state 為初始值
-        state = { ...initialState }; 
-        
-        document.getElementById('start-screen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('status-bar').classList.remove('hidden');
-            document.getElementById('game-container').classList.remove('hidden');
-            updateDisplay();
-            loadScene();
-        }, 800);
-    }
 
     function updateDisplay() {
         document.getElementById('stress').innerText = state.stress;
@@ -284,15 +151,30 @@
         document.getElementById('aesthetic').innerText = state.aesthetic;
     }
 
+    function startGame() {
+        state = { ...initialState };
+        updateDisplay();
+        document.getElementById('start-screen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('status-bar').classList.remove('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            loadScene();
+        }, 800);
+    }
+
     function loadScene() {
+        if (state.step === 3) { // 訓練日結束，跳出過渡畫面
+            showTransition();
+            return;
+        }
+
         if (state.step < storyData.length) {
             const data = storyData[state.step];
             document.getElementById('scene-header').innerText = data.header;
             document.getElementById('story-text').innerHTML = data.text;
-            
             const container = document.getElementById('options-container');
             container.innerHTML = '';
-            
             data.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
@@ -306,37 +188,64 @@
     }
 
     function handleChoice(impact) {
-        // 修正：確保數值加減正確應用
-        for (let key in impact) { 
-            state[key] += impact[key]; 
-        }
+        for (let key in impact) { state[key] += impact[key]; }
         if (state.fatigue < 0) state.fatigue = 0;
+        if (state.stress < 0) state.stress = 0;
         state.step++;
         updateDisplay();
         loadScene();
     }
 
-    function resetGame() {
-        location.reload(); 
+    function showTransition() {
+        // 隱藏遊戲區域與數值面板
+        document.getElementById('status-bar').classList.add('hidden');
+        document.getElementById('game-container').classList.add('hidden');
+        
+        // 準備過渡文字
+        let feeling = state.stress > 40 ? "焦慮得幾乎無法思考" : (state.fatigue > 40 ? "累得連筆都拿不穩" : "感到前所未有的平靜");
+        document.getElementById('transition-text').innerHTML = `
+            「呼... 今天的練習終於結束了。
+            <br>看著剛寫完的字，熟練度達到了 ${state.skill}，標準度也有 ${state.precision}。
+            <br>但我現在${feeling}...
+            <br>明天就要踏進考場，迎接那決定命運的 50 分鐘。
+            <br>這十一年的努力，就看明天了。」
+        `;
+
+        // 顯示過渡畫面
+        const ts = document.getElementById('transition-screen');
+        ts.classList.add('visible-flex');
     }
+
+    function startCompetition() {
+        // 隱藏過渡畫面
+        document.getElementById('transition-screen').classList.remove('visible-flex');
+        
+        // 重新顯示遊戲區域與數值面板
+        document.getElementById('status-bar').classList.remove('hidden');
+        document.getElementById('game-container').classList.remove('hidden');
+        
+        // 載入下一題（比賽日第一題）
+        loadScene();
+    }
+
+    function resetGame() { location.reload(); }
 
     function showResult() {
         const container = document.getElementById('game-container');
-        let finishAbility = state.skill - (state.fatigue * 0.5);
-        let finalScore = (state.precision * 1.3) + (state.aesthetic * 0.7) - (state.stress * 0.5);
-        
+        let finishAbility = state.skill - (state.fatigue * 0.4);
+        let finalScore = (state.precision * 1.2) + (state.aesthetic * 0.8) - (state.stress * 0.5);
         let rank = "";
         let feedback = "";
 
-        if (finishAbility < 25) {
+        if (finishAbility < 60) {
             rank = "落選 (未完成)";
-            feedback = "遺憾！雖然你的字優美，但因體力透支與速度不足，鈴響時你還有字沒寫完。在全國賽中，這代表直接出局。";
-        } else if (finalScore > 115) {
+            feedback = "遺憾！雖然你的字優美，但因速度累積不足，鈴響時你還有字沒寫完。在全國賽中，這代表直接出局。";
+        } else if (finalScore > 140) {
             rank = "特優 (畢業)";
-            feedback = "奇蹟發生了！你在緊湊的 50 分鐘內展現了教科書般的精準。你終於從這場十一年的馬拉松中「畢業」了。";
-        } else if (finalScore > 85) {
+            feedback = "奇蹟發生了！你在緊湊的 50 分鐘內展現了極高的精確與美感。你終於從這場十一年的馬拉松中「畢業」了。";
+        } else if (finalScore > 100) {
             rank = "優等";
-            feedback = "你的表現極佳，但在評審眼裡，那些顫抖的線條終究成了遺憾。明年，你還會站在這裡嗎？";
+            feedback = "表現極佳，但在評審眼裡，部分線條仍因疲勞略顯僵硬。明年，你還會站在這裡嗎？";
         } else {
             rank = "甲等";
             feedback = "你完成了一件規矩的作品。但在追求「標準」的過程中，你似乎也殺死了書法原有的藝術靈魂。";
@@ -350,9 +259,7 @@
                 ${feedback}
                 <br><br>
                 <hr>
-                <p style="font-size: 14px; color: #666;">
-                    這是一場關於「權衡」的競賽。根據報導，許多選手為了在時限內寫完，必須放棄個人風格。
-                </p>
+                <p style="font-size: 14px; color: #666;">這是一場關於「權衡」的競賽。根據報導，許多選手為了在時限內寫完，必須放棄個人風格。</p>
             </div>
             <button class="start-btn" style="width:100%" onclick="resetGame()">重新挑戰</button>
         `;
