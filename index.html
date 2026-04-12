@@ -44,8 +44,8 @@
         #transition-screen {
             background: #000;
             color: #eee;
+            display: none; /* 改用 display 切換確保不干涉 */
             opacity: 0;
-            pointer-events: none;
         }
 
         #start-screen::before {
@@ -87,7 +87,7 @@
         .option-btn:hover { border-color: var(--accent-red); background: #fff8f8; }
 
         .hidden { display: none !important; }
-        .visible-flex { display: flex !important; opacity: 1 !important; pointer-events: auto !important; }
+        .visible-flex { display: flex !important; opacity: 1 !important; }
 
         .result-rank { font-size: 48px; color: var(--accent-red); text-align: center; margin: 20px 0; font-weight: bold; }
     </style>
@@ -109,8 +109,7 @@
 
 <div id="transition-screen" class="full-screen-overlay">
     <h2 style="color: var(--gold); letter-spacing: 5px;">集訓結束，深夜十一點</h2>
-    <div id="transition-text" class="monologue">
-        </div>
+    <div id="transition-text" class="monologue"></div>
     <button class="start-btn" onclick="startCompetition()">準備梳洗，迎接明天的比賽</button>
 </div>
 
@@ -131,13 +130,14 @@
 <script>
     const initialState = { stress: 0, fatigue: 0, skill: 0, precision: 0, aesthetic: 0, step: 0 };
     let state = { ...initialState };
+    let inTransition = false; // 新增：追蹤是否在過渡狀態
 
     const storyData = [
-        // 訓練日 1-3
         { header: "訓練日：字體的抉擇", text: "老師叮嚀：『今年評審口味偏向唐楷，但如果你寫習慣的顏體，求穩也是策略。』你要選擇哪種風格進行最後特訓？", options: [{ text: "選擇歐陽詢（唐楷）：結構嚴謹，符合評審主流。", impact: { precision: 30, skill: 10, stress: 15 } }, { text: "選擇智永：筆法流暢，能大幅提升書寫速度。", impact: { skill: 35, aesthetic: 20, precision: 10 } }, { text: "選擇顏真卿：渾厚穩重，你最熟悉的本命字體。", impact: { precision: 20, fatigue: 5, stress: 5 } }] },
         { header: "訓練日：午間集訓 PK", text: "下午進行全縣集訓 PK 賽。現場老師將所有人的作品貼在黑板上，輪流講評。面對批評，你的反應是？", options: [{ text: "虛心受教：反覆修改標準字形，磨練穩定性。", impact: { precision: 25, fatigue: 20, stress: 15 } }, { text: "堅持美感：偷偷加入一些帖字的省筆，增加藝術性。", impact: { aesthetic: 30, precision: -10, stress: 10 } }, { text: "觀察對手：看別人的作品來調整自己的佈局。", impact: { skill: 15, aesthetic: 10, fatigue: 15 } }] },
         { header: "訓練日：深夜的體力邊緣", text: "已經晚上 10 點了，你感到手指痠痛，手感卻正燙。明天就是全國賽，你要？", options: [{ text: "再練 50 遍：為了肌肉記憶，拼了！", impact: { skill: 30, fatigue: 40, stress: 25 } }, { text: "立即休息：保持體力，避免明天手抖。", impact: { fatigue: -10, stress: -15, precision: 10 } }, { text: "冥想臨摹：不拿筆，腦中模擬筆畫轉折。", impact: { aesthetic: 20, stress: -5, skill: 10 } }] },
-        // 比賽日 4-6
+        
+        // 比賽日
         { header: "比賽日：開局的突發失誤", text: "哨音響起！50 分鐘倒數開始。進行到第 20 分鐘時，你發現有一個字的撇畫不夠精準，你會？", options: [{ text: "強迫症發作：後面的字花更多時間雕琢，務求精確修正。", impact: { precision: 25, skill: -20, stress: 25 } }, { text: "棄車保帥：無視失誤維持速度，剩下的字順順寫完。", impact: { skill: 20, precision: -5, stress: 10 } }, { text: "調整呼吸：放慢一點點速度，重新抓回運筆手感。", impact: { precision: 15, aesthetic: 15, fatigue: 10 } }] },
         { header: "比賽日：中場的生理極限", text: "時間剩下 15 分鐘，還有 20 個字。此時你昨晚練習累積的疲勞爆發，手指開始顫抖，你要怎麼應對？", options: [{ text: "咬牙硬撐：用更大的握筆力道抑制顫抖，堅持寫完。", impact: { fatigue: 25, precision: -15, skill: 15 } }, { text: "放輕筆觸：改用較輕靈的藝術筆法，掩飾線條的不穩。", impact: { aesthetic: 20, precision: -20, skill: 10 } }, { text: "短暫停筆：閉眼三秒調整肌肉，消耗時間換取穩定。", impact: { precision: 20, skill: -15, stress: -10 } }] },
         { header: "比賽日：最後的落款難題", text: "最後 3 分鐘！字全部寫完了。你發現作品右下角佈局略顯空曠。你要做最後的「調整」嗎？", options: [{ text: "遵守規範：保持原樣，避免任何被扣分的風險。", impact: { precision: 25, stress: -10 } }, { text: "美化佈局：稍微拉長最後一字的末筆，填補空間感。", impact: { aesthetic: 25, precision: -15, stress: 15 } }, { text: "反覆檢查：放棄美感，把時間拿來檢查有無錯漏字。", impact: { precision: 30, aesthetic: -15, fatigue: 10 } }] }
@@ -152,7 +152,10 @@
     }
 
     function startGame() {
-        state = { ...initialState };
+        state = { 
+            stress: 0, fatigue: 0, skill: 0, precision: 0, aesthetic: 0, step: 0 
+        };
+        inTransition = false;
         updateDisplay();
         document.getElementById('start-screen').style.opacity = '0';
         setTimeout(() => {
@@ -164,7 +167,8 @@
     }
 
     function loadScene() {
-        if (state.step === 3) { // 訓練日結束，跳出過渡畫面
+        // 如果是訓練日結束且尚未進入過渡畫面
+        if (state.step === 3 && !inTransition) {
             showTransition();
             return;
         }
@@ -197,11 +201,10 @@
     }
 
     function showTransition() {
-        // 隱藏遊戲區域與數值面板
+        inTransition = true; // 標記已處理過渡
         document.getElementById('status-bar').classList.add('hidden');
         document.getElementById('game-container').classList.add('hidden');
         
-        // 準備過渡文字
         let feeling = state.stress > 40 ? "焦慮得幾乎無法思考" : (state.fatigue > 40 ? "累得連筆都拿不穩" : "感到前所未有的平靜");
         document.getElementById('transition-text').innerHTML = `
             「呼... 今天的練習終於結束了。
@@ -211,20 +214,18 @@
             <br>這十一年的努力，就看明天了。」
         `;
 
-        // 顯示過渡畫面
         const ts = document.getElementById('transition-screen');
         ts.classList.add('visible-flex');
     }
 
     function startCompetition() {
-        // 隱藏過渡畫面
+        // 核心修正：正確移除過渡畫面並重新顯示遊戲
         document.getElementById('transition-screen').classList.remove('visible-flex');
         
-        // 重新顯示遊戲區域與數值面板
         document.getElementById('status-bar').classList.remove('hidden');
         document.getElementById('game-container').classList.remove('hidden');
         
-        // 載入下一題（比賽日第一題）
+        // 此時 state.step 已經是 3，剛好對應比賽第一題，直接加載
         loadScene();
     }
 
