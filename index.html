@@ -38,7 +38,6 @@
             transition: opacity 0.8s ease;
         }
 
-        /* 模擬墨跡裝飾 */
         #start-screen::before {
             content: "法";
             position: absolute;
@@ -188,15 +187,15 @@
 </div>
 
 <div id="game-container" class="hidden">
-    <h2 id="scene-header" class="scene-title">訓練日：清晨的抉擇</h2>
+    <h2 id="scene-header" class="scene-title">標題載入中...</h2>
     <div id="story-text"></div>
     <div id="options-container" class="options-grid"></div>
 </div>
 
 <script>
     let state = {
-        stress: 15,
-        fatigue: 5,
+        stress: 10,
+        fatigue: 0,
         skill: 30,
         precision: 50,
         aesthetic: 20,
@@ -204,40 +203,60 @@
     };
 
     const storyData = [
+        // --- 訓練日情境 (第一版題目) ---
         {
             header: "訓練日：字體的抉擇",
-            text: "老師叮嚀：『今年評審口味偏向秀雅的唐楷。』你最拿手的是顏體，但為了得獎，你決定今日特訓的重點是？",
+            text: "老師叮嚀：『今年評審口味偏向唐楷，但如果你寫習慣的顏體，求穩也是策略。』你要選擇哪種風格進行最後特訓？",
             options: [
-                { text: "改練歐陽詢：為了迎合評審標準，挑戰更高精確度。", impact: { precision: 20, skill: -5, stress: 15 } },
-                { text: "專攻智永：流暢性高，能幫你在50分鐘內輕鬆寫完。", impact: { skill: 20, aesthetic: 10, precision: -5 } },
-                { text: "維持顏真卿：穩紮穩打，雖然節奏慢，但心靈最安定。", impact: { precision: 10, fatigue: -5, stress: -10 } }
+                { text: "選擇歐陽詢（唐楷）：結構嚴謹，符合評審主流。", impact: { precision: 20, skill: -5, stress: 10 } },
+                { text: "選擇智永：筆法流暢，能大幅提升書寫速度。", impact: { skill: 20, aesthetic: 10, precision: -5 } },
+                { text: "選擇顏真卿：渾厚穩重，你最熟悉的本命字體。", impact: { precision: 10, fatigue: -5, stress: -5 } }
             ]
         },
         {
-            header: "訓練日：集訓 PK 現場",
-            text: "全縣國賽選手齊聚一堂。大家把字貼在黑板上，指導老師嚴厲地批改：『這個勾沒藏鋒！這個字寫出格了！』",
+            header: "訓練日：午間集訓 PK",
+            text: "下午進行全縣集訓 PK 賽。現場老師將所有人的作品貼在黑板上，輪流講評。面對批評，你的反應是？",
             options: [
-                { text: "拚命修正：每個字都要求到完美，手開始僵硬了。", impact: { precision: 15, fatigue: 20, stress: 15 } },
-                { text: "研究帖字：嘗試加入名家墨跡的藝術變化，增加美感。", impact: { aesthetic: 25, precision: -15, stress: 5 } },
-                { text: "觀察對手：看著別人的特優作品，心理壓力劇增。", impact: { skill: 10, stress: 20, fatigue: 5 } }
+                { text: "虛心受教：反覆修改標準字形，磨練穩定性。", impact: { precision: 15, fatigue: 15, stress: 10 } },
+                { text: "堅持美感：偷偷加入一些帖字的省筆，增加藝術性。", impact: { aesthetic: 20, precision: -15, stress: 5 } },
+                { text: "觀察對手：看別人的作品來調整自己的佈局。", impact: { skill: 10, aesthetic: 5, fatigue: 10 } }
             ]
         },
         {
-            header: "訓練日：深夜的執著",
-            text: "指尖已經沾滿墨水，手腕痠痛。家人勸你早點睡，但你想起那些等第制的名額...",
+            header: "訓練日：深夜的體力邊緣",
+            text: "已經晚上 10 點了，你感到手指痠痛，手感卻正燙。明天就是全國賽，你要？",
             options: [
-                { text: "通宵苦練：為了肌肉記憶，再寫最後五十張！", impact: { skill: 25, fatigue: 35, stress: 20 } },
-                { text: "調整作息：收起筆墨，保持明天比賽的清醒。", impact: { fatigue: -20, stress: -15, precision: 5 } },
-                { text: "意守丹田：閉目模擬筆順，減少肉體消耗。", impact: { aesthetic: 15, stress: -5, skill: 5 } }
+                { text: "再練 50 遍：為了肌肉記憶，拼了！", impact: { skill: 20, fatigue: 30, stress: 20 } },
+                { text: "立即休息：保持體力，避免明天手抖。", impact: { fatigue: -20, stress: -10, precision: 5 } },
+                { text: "冥想臨摹：不拿筆，腦中模擬筆畫轉折。", impact: { aesthetic: 10, stress: -5, skill: 5 } }
+            ]
+        },
+        // --- 比賽日情境 (擴充至三題) ---
+        {
+            header: "比賽日：開局的突發失誤",
+            text: "哨音響起！50 分鐘倒數開始。進行到第 20 分鐘時，你發現有一個字的撇畫不夠精準，與範帖有些微落差，你會？",
+            options: [
+                { text: "強迫症發作：後面的字花更多時間雕琢，務求精確修正。", impact: { precision: 20, skill: -20, stress: 20 } },
+                { text: "棄車保帥：無視失誤維持速度，剩下的字順順寫完。", impact: { skill: 15, precision: -5, stress: 5 } },
+                { text: "調整呼吸：放慢一點點速度，重新抓回運筆手感。", impact: { precision: 10, aesthetic: 10, fatigue: 5 } }
             ]
         },
         {
-            header: "比賽當日：50 分鐘倒數",
-            text: "比賽鈴響，空氣凝結。寫到一半，你發現紙張吸水速度比平常快，筆墨控制變得困難！",
+            header: "比賽日：中場的生理極限",
+            text: "時間剩下 15 分鐘，還有 20 個字。此時你昨晚練習累積的疲勞爆發，手指開始不自覺輕微顫抖，你要怎麼應對？",
             options: [
-                { text: "強行加速：不管細節了，先求寫完再說。", impact: { skill: 15, precision: -20, stress: 15 } },
-                { text: "謹慎運筆：每一筆都小心翼翼，即使時間可能不夠。", impact: { precision: 20, skill: -15, fatigue: 10 } },
-                { text: "平常心對待：把平常訓練的手感發揮出來。", impact: { aesthetic: 10, precision: 5, stress: -10 } }
+                { text: "咬牙硬撐：用更大的握筆力道抑制顫抖，堅持寫完。", impact: { fatigue: 20, precision: -10, skill: 10 } },
+                { text: "放輕筆觸：改用較輕靈的藝術筆法，掩飾線條的不穩。", impact: { aesthetic: 15, precision: -15, skill: 5 } },
+                { text: "短暫停筆：閉眼三秒調整肌肉，消耗時間換取穩定。", impact: { precision: 15, skill: -15, stress: -10 } }
+            ]
+        },
+        {
+            header: "比賽日：最後的落款難題",
+            text: "最後 3 分鐘！字全部寫完了。規則規定不能落款，但你發現作品右下角佈局略顯空曠。你要做最後的「調整」嗎？",
+            options: [
+                { text: "留白致敬：保持乾淨，遵守語文競賽最嚴格的規範。", impact: { precision: 20, stress: -10 } },
+                { text: "微調佈局：稍微拉長最後一字的末筆，填補空間美感。", impact: { aesthetic: 20, precision: -10, stress: 10 } },
+                { text: "檢查錯字：放棄美感，把所有時間拿來檢查有沒有漏字。", impact: { precision: 25, aesthetic: -10, fatigue: 5 } }
             ]
         }
     ];
@@ -294,37 +313,38 @@
         const container = document.getElementById('game-container');
         
         // 判定邏輯：技能(速)與疲勞的對比
-        let completeScore = state.skill - (state.fatigue * 0.4);
-        let finalScore = (state.precision * 1.3) + (state.aesthetic * 0.7) - (state.stress * 0.6);
+        // 熟練度與疲勞決定是否能在50分鐘內寫完
+        let finishAbility = state.skill - (state.fatigue * 0.5);
+        let finalScore = (state.precision * 1.3) + (state.aesthetic * 0.7) - (state.stress * 0.5);
         
-        if (completeScore < 30) finalScore -= 40; // 未完賽大扣分
-
         let rank = "";
         let feedback = "";
 
-        if (finalScore > 105) {
+        if (finishAbility < 25) {
+            rank = "落選 (未完成)";
+            feedback = "非常遺憾，雖然你的字跡優美，但因為體力透支與速度不足，鈴響時你還有三個字沒寫完。在全國賽中，這代表直接出局。";
+        } else if (finalScore > 110) {
             rank = "特優 (畢業)";
-            feedback = "你在高度壓力下維持了驚人的精準度。恭喜你從長達十一年的賽場中『畢業』，這是一段痛苦卻也充滿榮耀的旅程。";
-        } else if (finalScore > 80) {
+            feedback = "奇蹟發生了！你在緊湊的 50 分鐘內展現了教科書般的精準度。你終於從這場長達十一年的馬拉松中「畢業」了。";
+        } else if (finalScore > 85) {
             rank = "優等";
-            feedback = "你的書法技術深厚，但可惜今日的疲勞影響了運筆的靈動感。明年或許還有機會再戰。";
-        } else if (finalScore > 50) {
-            rank = "甲等";
-            feedback = "雖然順利寫完，但為了符合『標準』，你失去了書法的個人藝術美感。你感受到比賽對創作的制約了嗎？";
+            feedback = "你的表現極佳，但在評審眼裡，那幾處因為疲勞產生的顫抖線條終究成了遺憾。明年，你還會站在這裡嗎？";
         } else {
-            rank = "落選";
-            feedback = "墨跡在紙上顯得力不從心。也許是壓力太重，或是體力已達極限。這不僅僅是技術的問題，更是身心的耗損。";
+            rank = "甲等";
+            feedback = "你完成了一件規規矩矩的作品。雖然沒有失誤，但在追求「標準」的過程中，你似乎也殺死了書法原有的藝術靈魂。";
         }
 
         container.innerHTML = `
             <h2 class="scene-title">最終評選結果</h2>
             <div class="result-rank">${rank}</div>
             <div id="story-text">
-                <b>總評分：${Math.round(finalScore)}</b><br><br>
+                <b>最終技術總分：${Math.round(finalScore)}</b><br><br>
                 ${feedback}
                 <br><br>
                 <hr>
-                <small>本互動新聞改編自《大學報》：實用與藝術性的權衡——語文競賽如何形塑書法教育。</small>
+                <p style="font-size: 14px; color: #666;">
+                    這是一場關於「權衡」的競賽。根據報導，許多選手為了在 50 分鐘內寫完 50 個字，必須放棄更具美感的「帖字」與個人風格。
+                </p>
             </div>
             <button class="start-btn" style="width:100%" onclick="location.reload()">重新挑戰</button>
         `;
